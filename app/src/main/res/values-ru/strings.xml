@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">TestDaily</string>
+    <string name="tag_external">Внешний</string>
+    <string name="delete">Удалить</string>
+    <string name="create_task_name">Введите имя (до 16 символов)</string>
+    <string name="create_task_lore">Введите описание</string>
+    <string name="create_task_title">Создание задачи</string>
+    <string name="create_task_data">Выберите дату</string>
+    <string name="create_task_start">Выберите время начала</string>
+    <string name="create_task_end">Выберите время окончания</string>
+    <string name="dufault_save">Сохранить</string>
+    <string name="default_back">Назад</string>
+    <string name="create_task_empty_field">Не может быть пустым!</string>
+    <string name="icons_lock">замок</string>
+    <string name="icons_settings">настройки</string>
+    <string name="icons_profile">профиль</string>
+    <string name="icons_add">добавить</string>
+    <string name="settings_title">Настройки</string>
+    <string name="settings_lang">Выберите язык:</string>
+    <string name="settings_color">Выберите тему:</string>
+</resources>
