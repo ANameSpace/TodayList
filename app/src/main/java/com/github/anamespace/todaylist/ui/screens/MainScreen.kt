@@ -11,6 +11,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -121,6 +122,7 @@ fun MainScreen(
         },
         content = { innerPadding ->
             MyLazyColumn(
+                innerPadding = innerPadding,
                 listState = listState,
                 tasks = tasks,
                 isLoading = isLoading,
@@ -138,6 +140,7 @@ fun MainScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyLazyColumn(
+    innerPadding: PaddingValues,
     listState: LazyListState,
     tasks: List<ITask>,
     isLoading: Boolean,
