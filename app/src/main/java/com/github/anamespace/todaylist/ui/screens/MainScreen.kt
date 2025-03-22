@@ -162,13 +162,11 @@ fun MyLazyColumn(
                 item {
                     Icon(
                         imageVector = Icons.Default.DoneAll,
-                        contentDescription = "123",
-                        modifier = Modifier
-                            .size(128.dp)
-                            //.align(Alignment.CenterHorizontally)
+                        contentDescription = stringResource(id = R.string.no_tasks),
+                        modifier = Modifier.size(128.dp)
                     )
                     Text(
-                        text = "Пусто",
+                        text = stringResource(id = R.string.no_tasks),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
