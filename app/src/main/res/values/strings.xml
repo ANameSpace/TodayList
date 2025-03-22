@@ -3,7 +3,7 @@
     <string name="tag_external">External</string>
     <string name="delete">Delete</string>
     <string name="create_task_title">Create task</string>
-    <string name="create_task_name">Name input (up to 16 characters)</string>
+    <string name="create_task_name">Name input (up to 32 characters)</string>
     <string name="create_task_lore">Description input</string>
     <string name="create_task_data">Select a date</string>
     <string name="create_task_start">Select the start time</string>
@@ -16,7 +16,11 @@
     <string name="icons_profile">profile</string>
     <string name="icons_add">add</string>
     <string name="settings_title">Settings</string>
-    <string name="settings_lang">Select language:</string>
-    <string name="settings_color">Select theme:</string>
+    <string name="settings_lang">Language:</string>
+    <string name="settings_color">Theme:</string>
     <string name="no_tasks">Empty</string>
+    <string name="theme_dark">dark</string>
+    <string name="theme_white">white</string>
+    <string name="settings_notify">Notify:</string>
+    <string name="create_task_notify">Send notify:</string>
 </resources>

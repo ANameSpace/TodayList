@@ -6,9 +6,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.core.content.edit
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.github.anamespace.todaylist.alarm.NotificationScheduler
 import com.github.anamespace.todaylist.model.AppDatabase
 import com.github.anamespace.todaylist.model.UserTask
 import com.github.anamespace.todaylist.ui.screens.CreateTaskScreen
@@ -18,24 +20,25 @@ import com.github.anamespace.todaylist.ui.theme.AppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Locale
-import androidx.core.content.edit
 
 class MainActivity : ComponentActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var database: AppDatabase
+    private lateinit var notificationScheduler: NotificationScheduler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         database = AppDatabase.getDatabase(this)
         sharedPreferences = getSharedPreferences("app_settings", MODE_PRIVATE)
+        notificationScheduler = NotificationScheduler(this)
 
-        //sharedPreferences.getString("app-lang", "").orEmpty()
+
+        //sharedPreferences.getBoolean("app-notify", false)
 
         enableEdgeToEdge()
         setContent {
             AppTheme {
-                Navigation(sharedPreferences, database)
+                Navigation(sharedPreferences, database, notificationScheduler)
             }
         }
     }
@@ -43,7 +46,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun Navigation(sharedPreferences: SharedPreferences, database: AppDatabase) {
+fun Navigation(sharedPreferences: SharedPreferences, database: AppDatabase, notificationScheduler: NotificationScheduler){
     val navController = rememberNavController()
 
     NavHost(navController, startDestination = "main_screen") {
@@ -57,50 +60,57 @@ fun Navigation(sharedPreferences: SharedPreferences, database: AppDatabase) {
         composable("create_task_screen") {
             CreateTaskScreen(
                 onBack = { navController.popBackStack() },
-                onSave = { name, description, date, startTime, endTime ->
+                onSave = { name, description, date, startTime, endTime, notify ->
                     val newTask = UserTask(
                         taskDate = date, taskStartTime = startTime,
                         taskEndTime = endTime,
                         taskName = name,
                         taskShortLore = description,
-                        taskFullLore = description
+                        taskFullLore = description,
+                        sendNotify = notify
                     )
                     CoroutineScope(Dispatchers.IO).launch {
                         database.taskDao().insert(newTask)
+
+                        /*if (notify && date.isAfter(LocalDate.now()) && startTime.isAfter(LocalTime.now())) {
+                            val calendar = Calendar.getInstance().apply {
+                                set(Calendar.YEAR, date.year)
+                                set(Calendar.MONTH, date.month.value)
+                                set(Calendar.DAY_OF_MONTH, date.dayOfMonth)
+                                set(Calendar.HOUR_OF_DAY, startTime.hour)
+                                set(Calendar.MINUTE, startTime.minute)
+                            }
+
+                            val triggerAtMillis = calendar.timeInMillis
+                            val requestCode = newTask.id.toInt()
+
+                            notificationScheduler.scheduleNotification(
+                                timeInMillis = triggerAtMillis,
+                                requestCode = requestCode,
+                                title = "Напоминание",
+                                text = name
+                            )
+
+
+                            // notificationScheduler.cancelScheduledNotification(requestCode)
+                        }*/
                     }
                     navController.popBackStack()
-                }
+                },
+                notifyEnabled = sharedPreferences.getBoolean("app-notify", false)
             )
         }
         composable("settings_screen") {
             SettingsScreen(
                 onBack = { navController.popBackStack() },
-                onSave = { languageCode, themeName ->
+                onSave = { useNotify ->
                     sharedPreferences.edit {
-                        putString("app-lang", languageCode)
-                        putString("app-theme", themeName)
-                    }
-                    if(languageCode.isNotEmpty()) {
-                        val locale = Locale(languageCode)
-                        Locale.setDefault(locale)
-                    } else {
-                        Locale.setDefault(Locale.getDefault())
+                        putBoolean("app-notify", useNotify)
                     }
                     navController.popBackStack()
                 },
-                currentLanguage = sharedPreferences.getString("app-lang", "").orEmpty(),
-                currentTheme = sharedPreferences.getString("app-theme", "").orEmpty()
+                currentNotify = sharedPreferences.getBoolean("app-notify", false)
             )
         }
     }
 }
-
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    TodayListTheme {
-        Greeting("Android")
-    }
-}*/

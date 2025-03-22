@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.DateRange
@@ -17,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,14 +42,16 @@ import java.util.Calendar
 
 @Composable
 fun CreateTaskScreen(
+    notifyEnabled: Boolean,
     onBack: () -> Unit,
-    onSave: (String, String, LocalDate, LocalTime, LocalTime) -> Unit
+    onSave: (String, String, LocalDate, LocalTime, LocalTime, Boolean) -> Unit
 ) {
     var taskName by remember { mutableStateOf(TextFieldValue("")) }
     var taskDescription by remember { mutableStateOf(TextFieldValue("")) }
     var taskDate by remember { mutableStateOf(LocalDate.now()) }
     var startTime by remember { mutableStateOf(LocalTime.of(0, 0)) }
     var endTime by remember { mutableStateOf(LocalTime.of(0, 0)) }
+    var useNotify by remember { mutableStateOf(false) }
 
     var showDatePicker by remember { mutableStateOf(false) }
     var showStartTimePicker by remember { mutableStateOf(false) }
@@ -72,7 +78,17 @@ fun CreateTaskScreen(
             value = taskName,
             onValueChange = {
                 isEditName = true
-                if (it.text.length <= 16) taskName = it
+                var newText = it.text.replace("\n", "")
+                if (it.text.length <= 32) {
+                    taskName = if(newText != it.text) {
+                        it.copy(
+                            text = newText,
+                            selection = TextRange(newText.length)
+                        )
+                    } else {
+                        it
+                    }
+                }
             },
             label = { Text(stringResource(id = R.string.create_task_name)) },
             modifier = Modifier.fillMaxWidth(),
@@ -149,6 +165,32 @@ fun CreateTaskScreen(
         )
 
         Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(42.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    shape = RoundedCornerShape(16.dp)
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(id = R.string.settings_notify),
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .padding(3.dp)
+            )
+            Switch(
+                checked = useNotify,
+                onCheckedChange = { useNotify = it },
+                enabled = notifyEnabled,
+                modifier = Modifier
+                    .padding(3.dp)
+            )
+        }
+
+        Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -159,7 +201,7 @@ fun CreateTaskScreen(
                         startTime = endTime
                         endTime = temp
                     }
-                    onSave(taskName.text, taskDescription.text, taskDate, startTime, endTime)
+                    onSave(taskName.text, taskDescription.text, taskDate, startTime, endTime, useNotify)
                 },
                 enabled = isNameValid
             ) {
@@ -223,8 +265,9 @@ fun CreateTaskScreen(
 fun CreateTaskScreenPreview() {
     AppTheme {
         CreateTaskScreen(
-            onSave = { _, _, _, _, _ -> },
-            onBack = {}
+            onSave = { _, _, _, _, _, _ -> },
+            onBack = {},
+            notifyEnabled = true
         )
     }
 }

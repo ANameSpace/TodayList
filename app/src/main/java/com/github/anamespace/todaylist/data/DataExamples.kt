@@ -12,5 +12,6 @@ fun getExampleTask(): UserTask {
         taskName = "Name",
         taskShortLore = "Lore lore lore lore",
         taskFullLore = "Lore lore lore lore lore lore lore lore lore lore lore lore\nLore lore \nLore lore",
+        sendNotify = false
     )
 }

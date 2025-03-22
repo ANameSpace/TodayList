@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">TestDaily</string>
+    <string name="app_name">TodayList</string>
     <string name="tag_external">Внешний</string>
     <string name="delete">Удалить</string>
-    <string name="create_task_name">Введите имя (до 16 символов)</string>
+    <string name="create_task_name">Введите имя (до 32 символов)</string>
     <string name="create_task_lore">Введите описание</string>
     <string name="create_task_title">Создание задачи</string>
     <string name="create_task_data">Выберите дату</string>
@@ -16,7 +16,11 @@
     <string name="icons_profile">профиль</string>
     <string name="icons_add">добавить</string>
     <string name="settings_title">Настройки</string>
-    <string name="settings_lang">Выберите язык:</string>
-    <string name="settings_color">Выберите тему:</string>
+    <string name="settings_lang">Язык:</string>
+    <string name="settings_color">Тема:</string>
     <string name="no_tasks">Пусто</string>
+    <string name="theme_dark">тёмная</string>
+    <string name="theme_white">светлая</string>
+    <string name="settings_notify">Уведомления:</string>
+    <string name="create_task_notify">Отправить уведомление:</string>
 </resources>

@@ -15,7 +15,8 @@ data class UserTask(
     override val taskEndTime: LocalTime,
     override val taskName: String,
     override val taskShortLore: String,
-    override val taskFullLore: String
+    override val taskFullLore: String,
+    override val sendNotify: Boolean
 ) : ITask {
     override val taskStatus: TaskStatus
         get() {

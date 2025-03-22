@@ -1,8 +1,15 @@
 package com.github.anamespace.todaylist.ui.screens
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.LocalActivity
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,15 +17,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDownCircle
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,33 +30,33 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.github.anamespace.todaylist.R
 import com.github.anamespace.todaylist.ui.theme.AppTheme
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onSave: (String, String) -> Unit,
+    onSave: (Boolean) -> Unit,
     onBack: () -> Unit,
-    currentLanguage: String,
-    currentTheme: String
+    currentNotify: Boolean
 ) {
-    val languages = mapOf(
-        "" to "System",
-        "en" to "English",
-        "ru" to "Русский"
-    )
-    val themes = mapOf(
-        "" to "System"
-    )
+    var useNotify by remember { mutableStateOf(currentNotify) }
 
-    var expandedLanguage by remember { mutableStateOf(false) }
-    var expandedTheme by remember { mutableStateOf(false) }
-    var selectedLanguage by remember { mutableStateOf(currentLanguage) }
-    var selectedTheme by remember { mutableStateOf(currentTheme) }
+    if (useNotify == true/* && Build.VERSION.SDK_INT >= 33*/) {
+        if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            LocalActivity.current?.let { ActivityCompat.requestPermissions(it, Array(1){Manifest.permission.POST_NOTIFICATIONS},101) };
+        }
+        /*if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.SCHEDULE_EXACT_ALARM) != PackageManager.PERMISSION_GRANTED) {
+            LocalActivity.current?.let { ActivityCompat.requestPermissions(it, Array(1){Manifest.permission.SCHEDULE_EXACT_ALARM},101) };
+        }*/
+    }
 
     Column(
         modifier = Modifier
@@ -74,66 +77,95 @@ fun SettingsScreen(
 
         // Language
         Spacer(modifier = Modifier.height(32.dp))
-        Text(
-            text = stringResource(id = R.string.settings_lang),
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Box(modifier = Modifier.fillMaxWidth()) {
-            OutlinedButton(onClick = { expandedLanguage = true }, modifier = Modifier.fillMaxWidth()) {
-                Text(text = languages.getOrDefault(currentLanguage, "-"))
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDownCircle,
-                    contentDescription = null
-                )
-            }
-            DropdownMenu(
-                expanded = expandedLanguage,
-                onDismissRequest = { expandedLanguage = false }
-            ) {
-                languages.keys.forEach { language ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(text = languages.getOrDefault(language, ""))
-                        },
-                        onClick = {
-                            selectedLanguage = language
-                            expandedLanguage = false
-                        }
-                    )
-                }
-            }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(42.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    shape = RoundedCornerShape(
+                        topStart = 16.dp,
+                        topEnd = 16.dp
+                    )),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(id = R.string.settings_lang),
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .padding(3.dp)
+            )
+            Text(
+                text = Locale.getDefault().displayLanguage,
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .padding(3.dp)
+            )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         // Theme
-        Text(
-            text = stringResource(id = R.string.settings_color),
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Box(modifier = Modifier.fillMaxWidth()) {
-            OutlinedButton(
-                onClick = { expandedTheme = true },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = false
-            ) {
-                Text(text = selectedTheme)
+        Spacer(modifier = Modifier.height(4.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(42.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    shape = RoundedCornerShape(
+                        bottomStart = 16.dp,
+                        bottomEnd = 16.dp
+                    )
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(id = R.string.settings_color),
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .padding(3.dp)
+            )
+            var themeNameresId = if(isSystemInDarkTheme()) {
+                R.string.theme_dark
+            } else {
+                R.string.theme_white
             }
-            DropdownMenu(
-                expanded = expandedTheme,
-                onDismissRequest = { expandedTheme = false }
-            ) {
-                themes.keys.forEach { theme ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(text = themes.getOrDefault(theme, ""))
-                        },
-                        onClick = {
-                        selectedTheme = theme
-                        expandedTheme = false
-                    })
-                }
-            }
+            Text(
+                text = stringResource(id = themeNameresId),
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .padding(3.dp)
+            )
+        }
+
+        // Notify
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(42.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    shape = RoundedCornerShape(16.dp)
+                ),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = stringResource(id = R.string.settings_notify),
+                color = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier
+                    .padding(3.dp)
+            )
+            Switch(
+                checked = useNotify,
+                onCheckedChange = {
+                    useNotify = it
+                },
+                modifier = Modifier
+                    .padding(3.dp)
+            )
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -143,7 +175,7 @@ fun SettingsScreen(
         ) {
             Button(
                 onClick = {
-                    onSave(selectedLanguage, selectedTheme)
+                    onSave(useNotify)
                 }
             ) {
                 Text(stringResource(id = R.string.dufault_save))
@@ -163,10 +195,9 @@ fun SettingsScreen(
 fun SettingsScreenPreview() {
     AppTheme {
         SettingsScreen(
-            onSave = { _, _ -> },
+            onSave = { _ -> },
             onBack = {},
-            currentLanguage = "",
-            currentTheme = ""
+            currentNotify = false
         )
     }
 }

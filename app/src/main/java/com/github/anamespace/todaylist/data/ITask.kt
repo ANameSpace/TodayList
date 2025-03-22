@@ -11,6 +11,7 @@ interface ITask {
     val taskShortLore: String
     val taskFullLore: String
     val taskStatus: TaskStatus
+    val sendNotify: Boolean
     val isExternal: Boolean
 }
 
