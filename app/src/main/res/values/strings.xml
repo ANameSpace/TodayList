@@ -18,4 +18,5 @@
     <string name="settings_title">Settings</string>
     <string name="settings_lang">Select language:</string>
     <string name="settings_color">Select theme:</string>
+    <string name="no_tasks">Empty</string>
 </resources>

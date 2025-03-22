@@ -1,10 +1,5 @@
 package com.github.anamespace.todaylist.ui.screens
 
-//import com.google.accompanist.swiperefresh.SwipeRefresh
-//import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-//import com.google.accompanist.pullrefresh.PullRefreshIndicator
-//import com.google.accompanist.pullrefresh.pullRefresh
-//import com.google.accompanist.pullrefresh.rememberPullRefreshState
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -24,10 +19,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DoneAll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -155,21 +152,38 @@ fun MyLazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(start = 8.dp, top = 8.dp, end = 8.dp),
-            state = listState
+            state = listState,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
                 Spacer(modifier = Modifier.height(UiConstants.CARD_ROW_HEIGHT))
             }
-            items(tasks) { task ->
-                CardItem(
-                    task = task,
-                    onDelete = { t ->
-                        CoroutineScope(Dispatchers.IO).launch {
-                            database.taskDao().delete(t)
+            if(tasks.isEmpty()) {
+                item {
+                    Icon(
+                        imageVector = Icons.Default.DoneAll,
+                        contentDescription = "123",
+                        modifier = Modifier
+                            .size(128.dp)
+                            //.align(Alignment.CenterHorizontally)
+                    )
+                    Text(
+                        text = "Пусто",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+            } else {
+                items(tasks) { task ->
+                    CardItem(
+                        task = task,
+                        onDelete = { t ->
+                            CoroutineScope(Dispatchers.IO).launch {
+                                database.taskDao().delete(t)
+                            }
                         }
-                    }
-                )
-                Spacer(modifier = Modifier.height(5.dp))
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                }
             }
         }
     }

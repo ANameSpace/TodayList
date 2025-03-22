@@ -18,4 +18,5 @@
     <string name="settings_title">Настройки</string>
     <string name="settings_lang">Выберите язык:</string>
     <string name="settings_color">Выберите тему:</string>
+    <string name="no_tasks">Пусто</string>
 </resources>
