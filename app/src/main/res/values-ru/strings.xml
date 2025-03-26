@@ -2,7 +2,7 @@
     <string name="app_name">TodayList</string>
     <string name="tag_external">Внешний</string>
     <string name="delete">Удалить</string>
-    <string name="create_task_name">Введите имя (до 32 символов)</string>
+    <string name="create_task_name">Введите название (до 32 символов)</string>
     <string name="create_task_lore">Введите описание</string>
     <string name="create_task_title">Создание задачи</string>
     <string name="create_task_data">Выберите дату</string>
@@ -23,4 +23,5 @@
     <string name="theme_white">светлая</string>
     <string name="settings_notify">Уведомления:</string>
     <string name="create_task_notify">Отправить уведомление:</string>
+    <string name="create_task_error_notify">Это отключено в настройках</string>
 </resources>

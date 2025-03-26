@@ -80,7 +80,7 @@ fun CardItemSheet(
             color = MaterialTheme.colorScheme.secondary
         )
         // Notify
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()

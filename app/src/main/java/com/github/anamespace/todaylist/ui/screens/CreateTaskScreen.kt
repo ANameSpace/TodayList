@@ -2,6 +2,7 @@ package com.github.anamespace.todaylist.ui.screens
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,12 +20,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.anamespace.todaylist.R
 import com.github.anamespace.todaylist.ui.theme.AppTheme
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Calendar
@@ -46,6 +53,7 @@ fun CreateTaskScreen(
     onBack: () -> Unit,
     onSave: (String, String, LocalDate, LocalTime, LocalTime, Boolean) -> Unit
 ) {
+    val context = LocalContext.current
     var taskName by remember { mutableStateOf(TextFieldValue("")) }
     var taskDescription by remember { mutableStateOf(TextFieldValue("")) }
     var taskDate by remember { mutableStateOf(LocalDate.now()) }
@@ -59,6 +67,9 @@ fun CreateTaskScreen(
 
     val isNameValid = taskName.text.isNotEmpty()
     var isEditName by remember { mutableStateOf(false) }
+
+    var errorToastMessage = stringResource(id = R.string.create_task_error_notify)
+
 
     Column(
         modifier = Modifier
@@ -183,8 +194,14 @@ fun CreateTaskScreen(
             )
             Switch(
                 checked = useNotify,
-                onCheckedChange = { useNotify = it },
-                enabled = notifyEnabled,
+                onCheckedChange = {
+                    if (notifyEnabled) {
+                        useNotify = it
+                    } else {
+                        Toast.makeText(context, errorToastMessage, Toast.LENGTH_SHORT).show()
+                    }
+                },
+                //enabled = notifyEnabled,
                 modifier = Modifier
                     .padding(3.dp)
             )
@@ -219,7 +236,7 @@ fun CreateTaskScreen(
     if (showDatePicker) {
         val calendar = Calendar.getInstance()
         DatePickerDialog(
-            LocalContext.current,
+            context,
             { _, year, month, dayOfMonth ->
                 taskDate = LocalDate.of(year, month + 1, dayOfMonth)
             },
@@ -233,7 +250,7 @@ fun CreateTaskScreen(
     if (showStartTimePicker) {
         val calendar = Calendar.getInstance()
         TimePickerDialog(
-            LocalContext.current,
+            context,
             { _, hourOfDay, minute ->
                 startTime = LocalTime.of(hourOfDay, minute)
             },
@@ -247,7 +264,7 @@ fun CreateTaskScreen(
     if (showEndTimePicker) {
         val calendar = Calendar.getInstance()
         TimePickerDialog(
-            LocalContext.current,
+            context,
             { _, hourOfDay, minute ->
                 endTime = LocalTime.of(hourOfDay, minute)
             },
