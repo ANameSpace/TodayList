@@ -1,12 +1,5 @@
 package com.github.anamespace.todaylist.ui.screens
 
-import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.activity.compose.LocalActivity
-import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -30,12 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.github.anamespace.todaylist.R
 import com.github.anamespace.todaylist.ui.theme.AppTheme
 import java.util.Locale
@@ -48,15 +38,15 @@ fun SettingsScreen(
     currentNotify: Boolean
 ) {
     var useNotify by remember { mutableStateOf(currentNotify) }
-
-    if (useNotify == true/* && Build.VERSION.SDK_INT >= 33*/) {
-        if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            LocalActivity.current?.let { ActivityCompat.requestPermissions(it, Array(1){Manifest.permission.POST_NOTIFICATIONS},101) };
-        }
-        /*if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.SCHEDULE_EXACT_ALARM) != PackageManager.PERMISSION_GRANTED) {
-            LocalActivity.current?.let { ActivityCompat.requestPermissions(it, Array(1){Manifest.permission.SCHEDULE_EXACT_ALARM},101) };
+    /*
+        if (useNotify == true/* && Build.VERSION.SDK_INT >= 33*/) {
+            if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                LocalActivity.current?.let { ActivityCompat.requestPermissions(it, Array(1){Manifest.permission.POST_NOTIFICATIONS},101) };
+            }
+            /*if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.SCHEDULE_EXACT_ALARM) != PackageManager.PERMISSION_GRANTED) {
+                LocalActivity.current?.let { ActivityCompat.requestPermissions(it, Array(1){Manifest.permission.SCHEDULE_EXACT_ALARM},102) };
+            }*/
         }*/
-    }
 
     Column(
         modifier = Modifier
@@ -86,7 +76,8 @@ fun SettingsScreen(
                     shape = RoundedCornerShape(
                         topStart = 16.dp,
                         topEnd = 16.dp
-                    )),
+                    )
+                ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -126,7 +117,7 @@ fun SettingsScreen(
                 modifier = Modifier
                     .padding(3.dp)
             )
-            var themeNameresId = if(isSystemInDarkTheme()) {
+            var themeNameresId = if (isSystemInDarkTheme()) {
                 R.string.theme_dark
             } else {
                 R.string.theme_white
@@ -164,7 +155,8 @@ fun SettingsScreen(
                     useNotify = it
                 },
                 modifier = Modifier
-                    .padding(3.dp)
+                    .padding(3.dp),
+                enabled = false
             )
         }
 
@@ -174,17 +166,17 @@ fun SettingsScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
+                onClick = { onBack() }
+            ) {
+                Text(stringResource(id = R.string.default_back))
+            }
+
+            Button(
                 onClick = {
                     onSave(useNotify)
                 }
             ) {
                 Text(stringResource(id = R.string.dufault_save))
-            }
-
-            Button(
-                onClick = { onBack() }
-            ) {
-                Text(stringResource(id = R.string.default_back))
             }
         }
     }

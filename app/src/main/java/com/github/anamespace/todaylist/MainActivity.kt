@@ -10,7 +10,6 @@ import androidx.core.content.edit
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.github.anamespace.todaylist.alarm.NotificationScheduler
 import com.github.anamespace.todaylist.model.AppDatabase
 import com.github.anamespace.todaylist.model.UserTask
 import com.github.anamespace.todaylist.ui.screens.CreateTaskScreen
@@ -24,13 +23,13 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var database: AppDatabase
-    private lateinit var notificationScheduler: NotificationScheduler
+//    private lateinit var notificationScheduler: NotificationScheduler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         database = AppDatabase.getDatabase(this)
         sharedPreferences = getSharedPreferences("app_settings", MODE_PRIVATE)
-        notificationScheduler = NotificationScheduler(this)
+//        notificationScheduler = NotificationScheduler(this)
 
 
         //sharedPreferences.getBoolean("app-notify", false)
@@ -38,7 +37,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
-                Navigation(sharedPreferences, database, notificationScheduler)
+                Navigation(sharedPreferences, database/*, notificationScheduler*/)
             }
         }
     }
@@ -46,7 +45,10 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun Navigation(sharedPreferences: SharedPreferences, database: AppDatabase, notificationScheduler: NotificationScheduler){
+fun Navigation(
+    sharedPreferences: SharedPreferences,
+    database: AppDatabase/*, notificationScheduler: NotificationScheduler*/
+) {
     val navController = rememberNavController()
 
     NavHost(navController, startDestination = "main_screen") {

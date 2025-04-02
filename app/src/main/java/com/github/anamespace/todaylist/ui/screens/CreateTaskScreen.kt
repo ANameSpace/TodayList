@@ -36,6 +36,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.github.anamespace.todaylist.R
+import com.github.anamespace.todaylist.ui.UiConstants
 import com.github.anamespace.todaylist.ui.theme.AppTheme
 import java.time.LocalDate
 import java.time.LocalTime
@@ -120,7 +121,7 @@ fun CreateTaskScreen(
 
         // Date
         OutlinedTextField(
-            value = taskDate.toString(),
+            value = taskDate.format(UiConstants.CARD_DATE_FORMAT),
             onValueChange = {},
             label = { Text(stringResource(id = R.string.create_task_data)) },
             modifier = Modifier.fillMaxWidth(),
@@ -137,7 +138,7 @@ fun CreateTaskScreen(
 
         // Time (start)
         OutlinedTextField(
-            value = startTime.toString(),
+            value = startTime.format(UiConstants.CARD_TIME_FORMAT),
             onValueChange = {},
             label = { Text(stringResource(id = R.string.create_task_start)) },
             modifier = Modifier.fillMaxWidth(),
@@ -154,7 +155,7 @@ fun CreateTaskScreen(
 
         // Time (end)
         OutlinedTextField(
-            value = endTime.toString(),
+            value = endTime.format(UiConstants.CARD_TIME_FORMAT),
             onValueChange = {},
             label = { Text(stringResource(id = R.string.create_task_end)) },
             modifier = Modifier.fillMaxWidth(),
@@ -206,23 +207,23 @@ fun CreateTaskScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(
+                onClick = { onBack() }
+            ) {
+                Text(stringResource(id = R.string.default_back))
+            }
+
+            Button(
                 onClick = {
                     if (startTime.isAfter(endTime)) {
                         val temp = startTime
                         startTime = endTime
                         endTime = temp
                     }
-                    onSave(taskName.text, taskDescription.text, taskDate, startTime, endTime, useNotify)
+                    onSave(taskName.text, taskDescription.text, taskDate, startTime, endTime, useNotify && taskDate.isAfter(LocalDate.now()) && startTime.isAfter(LocalTime.now()))
                 },
                 enabled = isNameValid
             ) {
                 Text(stringResource(id = R.string.dufault_save))
-            }
-
-            Button(
-                onClick = { onBack() }
-            ) {
-                Text(stringResource(id = R.string.default_back))
             }
         }
     }
